@@ -13,6 +13,8 @@ models:
           - not_null
       - name: full_date
         description: "Ngày đầy đủ (date)"
+        tests:
+          - not_null
       - name: day
         description: "Ngày trong tháng"
       - name: month
@@ -38,6 +40,9 @@ models:
         description: "Mã cá nhân gốc (một người có thể có nhiều customer_id)"
       - name: customer_id
         description: "Mã khách hàng theo đơn hàng"
+        tests:
+          - unique
+          - not_null
       - name: customer_city
         description: "Thành phố"
       - name: customer_state
@@ -59,6 +64,9 @@ models:
           - not_null
       - name: seller_id
         description: "Mã người bán gốc"
+        tests:
+          - unique
+          - not_null
       - name: seller_city
         description: "Thành phố"
       - name: seller_state
@@ -80,6 +88,9 @@ models:
           - not_null
       - name: product_id
         description: "Mã sản phẩm gốc"
+        tests:
+          - unique
+          - not_null
       - name: product_category_name
         description: "Tên danh mục (Bồ Đào Nha)"
       - name: product_category_name_english
@@ -103,6 +114,9 @@ models:
           - not_null
       - name: order_status
         description: "Trạng thái đơn hàng (delivered, shipped, ...)"
+        tests:
+          - unique
+          - not_null
 
   - name: dim_payment_type
     description: "Bảng thứ nguyên phương thức thanh toán"
@@ -114,6 +128,9 @@ models:
           - not_null
       - name: payment_type
         description: "Loại thanh toán (credit_card, boleto, voucher, ...)"
+        tests:
+          - unique
+          - not_null
 
   # ==================== FACT TABLES ====================
 
@@ -128,13 +145,26 @@ models:
       - name: order_id
         description: "Mã đơn hàng gốc"
         tests:
+          - unique
           - not_null
       - name: date_key
         description: "FK → dim_date"
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
       - name: customer_key
         description: "FK → dim_customer"
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_key
       - name: order_status_key
         description: "FK → dim_order_status"
+        tests:
+          - relationships:
+              to: ref('dim_order_status')
+              field: order_status_key
       - name: total_item_value
         description: "Tổng giá trị sản phẩm trong đơn"
       - name: total_freight_value
@@ -164,12 +194,28 @@ models:
           - not_null
       - name: date_key
         description: "FK → dim_date"
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
       - name: customer_key
         description: "FK → dim_customer"
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_key
       - name: product_key
         description: "FK → dim_product"
+        tests:
+          - relationships:
+              to: ref('dim_product')
+              field: product_key
       - name: seller_key
         description: "FK → dim_seller"
+        tests:
+          - relationships:
+              to: ref('dim_seller')
+              field: seller_key
       - name: price
         description: "Giá mặt hàng"
       - name: freight_value
@@ -191,10 +237,22 @@ models:
           - not_null
       - name: date_key
         description: "FK → dim_date"
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
       - name: customer_key
         description: "FK → dim_customer"
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_key
       - name: payment_type_key
         description: "FK → dim_payment_type"
+        tests:
+          - relationships:
+              to: ref('dim_payment_type')
+              field: payment_type_key
       - name: payment_sequential
         description: "Thứ tự thanh toán trong đơn"
       - name: payment_value

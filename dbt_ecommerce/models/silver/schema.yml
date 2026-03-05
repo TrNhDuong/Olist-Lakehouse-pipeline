@@ -15,8 +15,12 @@ models:
           - not_null
       - name: order_status
         description: "Trạng thái hiện tại của đơn hàng (VD: delivered, shipped, ...)"
+        tests:
+          - not_null
       - name: order_purchase_timestamp
         description: "Dấu thời gian khách hàng chốt đơn"
+        tests:
+          - not_null
       - name: order_approved_at
         description: "Dấu thời gian thanh toán được duyệt"
       - name: order_delivered_carrier_date
@@ -77,8 +81,12 @@ models:
     columns:
       - name: review_id
         description: "Mã định danh đánh giá"
+        tests:
+          - not_null
       - name: order_id
         description: "Mã định danh đơn hàng được đánh giá"
+        tests:
+          - not_null
       - name: review_score
         description: "Điểm đánh giá từ 1 đến 5 sao"
       - name: review_comment_title
@@ -163,6 +171,8 @@ models:
     columns:
       - name: geolocation_zip_code_prefix
         description: "Mã vùng bưu điện"
+        tests:
+          - not_null
       - name: geolocation_lat
         description: "Vĩ độ"
       - name: geolocation_lng
