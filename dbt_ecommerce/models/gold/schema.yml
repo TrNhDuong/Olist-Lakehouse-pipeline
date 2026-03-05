@@ -1,0 +1,203 @@
+version: 2
+
+models:
+  # ==================== DIMENSION TABLES ====================
+
+  - name: dim_date
+    description: "Bảng thứ nguyên thời gian — phát sinh từ order_purchase_timestamp"
+    columns:
+      - name: date_key
+        description: "Surrogate key dạng YYYYMMDD"
+        tests:
+          - unique
+          - not_null
+      - name: full_date
+        description: "Ngày đầy đủ (date)"
+      - name: day
+        description: "Ngày trong tháng"
+      - name: month
+        description: "Tháng"
+      - name: quarter
+        description: "Quý"
+      - name: year
+        description: "Năm"
+      - name: day_of_week
+        description: "Tên thứ trong tuần (Monday, Tuesday, ...)"
+      - name: is_weekend
+        description: "Có phải cuối tuần không (true/false)"
+
+  - name: dim_customer
+    description: "Bảng thứ nguyên khách hàng — denormalize với tọa độ geolocation"
+    columns:
+      - name: customer_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: customer_unique_id
+        description: "Mã cá nhân gốc (một người có thể có nhiều customer_id)"
+      - name: customer_id
+        description: "Mã khách hàng theo đơn hàng"
+      - name: customer_city
+        description: "Thành phố"
+      - name: customer_state
+        description: "Bang"
+      - name: customer_zip_code_prefix
+        description: "Mã bưu điện 5 chữ số đầu"
+      - name: geolocation_lat
+        description: "Vĩ độ trung bình theo zip code"
+      - name: geolocation_lng
+        description: "Kinh độ trung bình theo zip code"
+
+  - name: dim_seller
+    description: "Bảng thứ nguyên người bán — denormalize với tọa độ geolocation"
+    columns:
+      - name: seller_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: seller_id
+        description: "Mã người bán gốc"
+      - name: seller_city
+        description: "Thành phố"
+      - name: seller_state
+        description: "Bang"
+      - name: seller_zip_code_prefix
+        description: "Mã bưu điện 5 chữ số đầu"
+      - name: geolocation_lat
+        description: "Vĩ độ trung bình theo zip code"
+      - name: geolocation_lng
+        description: "Kinh độ trung bình theo zip code"
+
+  - name: dim_product
+    description: "Bảng thứ nguyên sản phẩm — denormalize với tên danh mục tiếng Anh"
+    columns:
+      - name: product_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: "Mã sản phẩm gốc"
+      - name: product_category_name
+        description: "Tên danh mục (Bồ Đào Nha)"
+      - name: product_category_name_english
+        description: "Tên danh mục (Tiếng Anh)"
+      - name: product_weight_g
+        description: "Cân nặng sản phẩm (gram)"
+      - name: product_length_cm
+        description: "Chiều dài sản phẩm (cm)"
+      - name: product_height_cm
+        description: "Chiều cao sản phẩm (cm)"
+      - name: product_width_cm
+        description: "Chiều rộng sản phẩm (cm)"
+
+  - name: dim_order_status
+    description: "Bảng thứ nguyên trạng thái đơn hàng"
+    columns:
+      - name: order_status_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: order_status
+        description: "Trạng thái đơn hàng (delivered, shipped, ...)"
+
+  - name: dim_payment_type
+    description: "Bảng thứ nguyên phương thức thanh toán"
+    columns:
+      - name: payment_type_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: payment_type
+        description: "Loại thanh toán (credit_card, boleto, voucher, ...)"
+
+  # ==================== FACT TABLES ====================
+
+  - name: fact_order
+    description: "Bảng sự kiện tổng hợp đơn hàng — grain: 1 dòng = 1 đơn hàng"
+    columns:
+      - name: order_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Mã đơn hàng gốc"
+        tests:
+          - not_null
+      - name: date_key
+        description: "FK → dim_date"
+      - name: customer_key
+        description: "FK → dim_customer"
+      - name: order_status_key
+        description: "FK → dim_order_status"
+      - name: total_item_value
+        description: "Tổng giá trị sản phẩm trong đơn"
+      - name: total_freight_value
+        description: "Tổng phí vận chuyển"
+      - name: total_order_value
+        description: "Tổng giá trị đơn hàng (item + freight)"
+      - name: delivery_days
+        description: "Số ngày giao hàng thực tế"
+      - name: review_score
+        description: "Điểm đánh giá (1–5), NULL nếu chưa đánh giá"
+      - name: is_reviewed
+        description: "Đơn đã được đánh giá hay chưa (1/0)"
+      - name: has_invalid_payment
+        description: "Đơn có giao dịch thanh toán không hợp lệ hay không"
+
+  - name: fact_order_item
+    description: "Bảng sự kiện chi tiết mặt hàng — grain: 1 dòng = 1 mặt hàng trong đơn"
+    columns:
+      - name: order_item_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Mã đơn hàng"
+        tests:
+          - not_null
+      - name: date_key
+        description: "FK → dim_date"
+      - name: customer_key
+        description: "FK → dim_customer"
+      - name: product_key
+        description: "FK → dim_product"
+      - name: seller_key
+        description: "FK → dim_seller"
+      - name: price
+        description: "Giá mặt hàng"
+      - name: freight_value
+        description: "Phí vận chuyển cho mặt hàng"
+      - name: total_value
+        description: "Tổng giá trị (price + freight_value)"
+
+  - name: fact_order_payment
+    description: "Bảng sự kiện thanh toán — grain: 1 dòng = 1 giao dịch thanh toán"
+    columns:
+      - name: order_payment_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Mã đơn hàng"
+        tests:
+          - not_null
+      - name: date_key
+        description: "FK → dim_date"
+      - name: customer_key
+        description: "FK → dim_customer"
+      - name: payment_type_key
+        description: "FK → dim_payment_type"
+      - name: payment_sequential
+        description: "Thứ tự thanh toán trong đơn"
+      - name: payment_value
+        description: "Giá trị giao dịch"
+      - name: payment_installments
+        description: "Số kỳ trả góp"

@@ -8,7 +8,7 @@ select
     geolocation_lat,
     geolocation_lng,
     geolocation_city,
-    geolocation_state
+    coalesce(geolocation_state, 'unknown') as geolocation_state 
 from bronze_geolocation
 where 
     geolocation_zip_code_prefix is not null

@@ -10,7 +10,11 @@ select
     seller_id,
     shipping_limit_date,
     price,
-    freight_value
+    freight_value,
+    case 
+        when price < 0 or freight_value < 0 then 'invalid'
+        else 'valid'
+    end as flag_valid
 from bronze_order_items
 where 
     order_id is not null 

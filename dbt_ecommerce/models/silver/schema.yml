@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: orders
+  - name: silver_orders
     description: "Bảng luân chuyển trạng thái đơn hàng"
     columns:
       - name: order_id
@@ -26,7 +26,7 @@ models:
       - name: order_estimated_delivery_date
         description: "Ngày giao hàng dự kiến ban đầu"
 
-  - name: order_items
+  - name: silver_order_items
     description: "Bảng chi tiết từng mặt hàng bên trong đơn hàng"
     columns:
       - name: order_id
@@ -51,8 +51,10 @@ models:
         description: "Giá mỗi mặt hàng"
       - name: freight_value
         description: "Chi phí vận chuyển cho mặt hàng (nếu đơn có nhiều hàng thì phí được chia nhỏ)"
+      - name: flag_valid
+        description: "Cờ kiểm tra tính hợp lệ (invalid nếu price < 0 hoặc freight_value < 0, ngược lại valid)"
 
-  - name: payments
+  - name: silver_payments
     description: "Bảng thông tin thanh toán các đơn hàng"
     columns:
       - name: order_id
@@ -67,8 +69,10 @@ models:
         description: "Số lần trả góp theo kỳ hạn"
       - name: payment_value
         description: "Giá trị giao dịch thanh toán"
+      - name: flag_valid
+        description: "Cờ kiểm tra tính hợp lệ (invalid nếu payment_value < 0, ngược lại valid)"
 
-  - name: reviews
+  - name: silver_reviews
     description: "Bảng dữ liệu đánh giá sản phẩm từ người dùng"
     columns:
       - name: review_id
@@ -86,7 +90,7 @@ models:
       - name: review_answer_timestamp
         description: "Thời điểm phản hồi đánh giá được lưu lại"
 
-  - name: products
+  - name: silver_products
     description: "Bảng danh mục các mặt hàng đang bán"
     columns:
       - name: product_id
@@ -111,7 +115,7 @@ models:
       - name: product_width_cm
         description: "Chiều rộng sản phẩm (cm)"
 
-  - name: customers
+  - name: silver_customers
     description: "Bảng thông tin hệ sinh thái khách hàng"
     columns:
       - name: customer_id
@@ -128,7 +132,7 @@ models:
       - name: customer_state
         description: "Bang định cư của khách"
 
-  - name: sellers
+  - name: silver_sellers
     description: "Bảng dữ liệu đối tác bán hàng"
     columns:
       - name: seller_id
@@ -143,7 +147,7 @@ models:
       - name: seller_state
         description: "Bang nhà bán hàng"
 
-  - name: categories
+  - name: silver_categories
     description: "Bảng danh mục sản phẩm tiếng anh"
     columns:
       - name: product_category_name
@@ -154,7 +158,7 @@ models:
       - name: product_category_name_english
         description: "Tên category theo chuẩn Quốc tế (Tiếng Anh)"
 
-  - name: geolocation
+  - name: silver_geolocation
     description: "Bảng mapping tọa độ thông qua mã zip code"
     columns:
       - name: geolocation_zip_code_prefix
