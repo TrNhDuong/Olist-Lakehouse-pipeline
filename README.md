@@ -2,7 +2,7 @@
 
 End-to-end Data Lakehouse pipeline xây dựng trên bộ dữ liệu **Brazilian E-Commerce (Olist)** — từ ingestion dữ liệu thô đến mô hình phân tích Star Schema, sử dụng kiến trúc **Medallion (Bronze → Silver → Gold)**.
 
-![Data Model](assets/MODEL.png)
+![Data Model](assets/RAW_LAYER.png)
 
 ---
 
