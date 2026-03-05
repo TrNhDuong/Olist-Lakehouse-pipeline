@@ -1,0 +1,169 @@
+version: 2
+
+models:
+  - name: orders
+    description: "Bảng luân chuyển trạng thái đơn hàng"
+    columns:
+      - name: order_id
+        description: "Mã định danh duy nhất của đơn hàng"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Mã định danh khách hàng tạo đơn"
+        tests:
+          - not_null
+      - name: order_status
+        description: "Trạng thái hiện tại của đơn hàng (VD: delivered, shipped, ...)"
+      - name: order_purchase_timestamp
+        description: "Dấu thời gian khách hàng chốt đơn"
+      - name: order_approved_at
+        description: "Dấu thời gian thanh toán được duyệt"
+      - name: order_delivered_carrier_date
+        description: "Dấu thời gian đơn hàng được báo cho đối tác vận chuyển"
+      - name: order_delivered_customer_date
+        description: "Dấu thời gian giao hàng thành công tới khách hàng"
+      - name: order_estimated_delivery_date
+        description: "Ngày giao hàng dự kiến ban đầu"
+
+  - name: order_items
+    description: "Bảng chi tiết từng mặt hàng bên trong đơn hàng"
+    columns:
+      - name: order_id
+        description: "Mã định danh đơn hàng"
+        tests:
+          - not_null
+      - name: order_item_id
+        description: "Số thứ tự các mặt hàng trong cùng 1 đơn hàng"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Mã định danh hàng hóa/sản phẩm"
+        tests:
+          - not_null
+      - name: seller_id
+        description: "Mã định danh nhà bán hàng (seller)"
+        tests:
+          - not_null
+      - name: shipping_limit_date
+        description: "Hạn chót để người bán giao hàng cho đối tác vận chuyển"
+      - name: price
+        description: "Giá mỗi mặt hàng"
+      - name: freight_value
+        description: "Chi phí vận chuyển cho mặt hàng (nếu đơn có nhiều hàng thì phí được chia nhỏ)"
+
+  - name: payments
+    description: "Bảng thông tin thanh toán các đơn hàng"
+    columns:
+      - name: order_id
+        description: "Mã định danh đơn hàng"
+        tests:
+          - not_null
+      - name: payment_sequential
+        description: "Số chuỗi thanh toán (nếu khách hàng trả bằng nhiều phương thức)"
+      - name: payment_type
+        description: "Phương thức thanh toán (credit_card, boleto, voucher, ...)"
+      - name: payment_installments
+        description: "Số lần trả góp theo kỳ hạn"
+      - name: payment_value
+        description: "Giá trị giao dịch thanh toán"
+
+  - name: reviews
+    description: "Bảng dữ liệu đánh giá sản phẩm từ người dùng"
+    columns:
+      - name: review_id
+        description: "Mã định danh đánh giá"
+      - name: order_id
+        description: "Mã định danh đơn hàng được đánh giá"
+      - name: review_score
+        description: "Điểm đánh giá từ 1 đến 5 sao"
+      - name: review_comment_title
+        description: "Tiêu đề bình luận đánh giá"
+      - name: review_comment_message
+        description: "Nội dung chi tiết bình luận"
+      - name: review_creation_date
+        description: "Ngày form đánh giá được gửi tới khách"
+      - name: review_answer_timestamp
+        description: "Thời điểm phản hồi đánh giá được lưu lại"
+
+  - name: products
+    description: "Bảng danh mục các mặt hàng đang bán"
+    columns:
+      - name: product_id
+        description: "Mã định danh sản phẩm"
+        tests:
+          - unique
+          - not_null
+      - name: product_category_name
+        description: "Tên danh mục gốc bằng tiếng Bồ Đào Nha"
+      - name: product_name_lenght
+        description: "Độ dài ký tự tên sản phẩm"
+      - name: product_description_lenght
+        description: "Độ dài ký tự mô tả sản phẩm"
+      - name: product_photos_qty
+        description: "Số lượng ảnh đi kèm"
+      - name: product_weight_g
+        description: "Cân nặng sản phẩm (gram)"
+      - name: product_length_cm
+        description: "Chiều dài sản phẩm (cm)"
+      - name: product_height_cm
+        description: "Chiều cao sản phẩm (cm)"
+      - name: product_width_cm
+        description: "Chiều rộng sản phẩm (cm)"
+
+  - name: customers
+    description: "Bảng thông tin hệ sinh thái khách hàng"
+    columns:
+      - name: customer_id
+        description: "Mã khách hàng trên từng đơn hàng riêng biệt"
+        tests:
+          - unique
+          - not_null
+      - name: customer_unique_id
+        description: "Mã định danh gốc theo cá nhân (một người có thể tạo nhiều đơn)"
+      - name: customer_zip_code_prefix
+        description: "Mã bưu điện (Zip code) 5 chữ số đầu"
+      - name: customer_city
+        description: "Thành phố định cư của khách"
+      - name: customer_state
+        description: "Bang định cư của khách"
+
+  - name: sellers
+    description: "Bảng dữ liệu đối tác bán hàng"
+    columns:
+      - name: seller_id
+        description: "Mã nhà cung cấp"
+        tests:
+          - unique
+          - not_null
+      - name: seller_zip_code_prefix
+        description: "Mã bưu điện (Zip code) 5 chữ số đầu"
+      - name: seller_city
+        description: "Thành phố nhà bán hàng"
+      - name: seller_state
+        description: "Bang nhà bán hàng"
+
+  - name: categories
+    description: "Bảng danh mục sản phẩm tiếng anh"
+    columns:
+      - name: product_category_name
+        description: "Tên category gốc (khóa chính liên kết)"
+        tests:
+          - unique
+          - not_null
+      - name: product_category_name_english
+        description: "Tên category theo chuẩn Quốc tế (Tiếng Anh)"
+
+  - name: geolocation
+    description: "Bảng mapping tọa độ thông qua mã zip code"
+    columns:
+      - name: geolocation_zip_code_prefix
+        description: "Mã vùng bưu điện"
+      - name: geolocation_lat
+        description: "Vĩ độ"
+      - name: geolocation_lng
+        description: "Kinh độ"
+      - name: geolocation_city
+        description: "Tên thành phố tại Zip Code tương ứng"
+      - name: geolocation_state
+        description: "Tên bang tại Zip Code tương ứng"

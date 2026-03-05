@@ -32,5 +32,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   dbt_ecommerce:
     # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: view
+    silver:
+      +materialized: table
+      +location_root: "abfss://ecommerce@duongbambo.dfs.core.windows.net/silver"
+    gold:
+      +materialized: table
+      +location_root: "abfss://ecommerce@duongbambo.dfs.core.windows.net/gold"
